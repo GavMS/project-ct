@@ -310,9 +310,9 @@
                 <p class="text-slate-400 text-sm md:text-base mb-6">Quantify your problem-solving DNA across 4 core
                     pillars of Computational Thinking. Accurate, fast, and scenario-based.</p>
 
-                <div class="bg-white/5 rounded-2xl p-4 mb-8 border border-white/10 text-left">
+                <div class="bg-white/5 rounded-2xl p-4 mb-6 border border-white/10 text-left">
                     <p class="text-sm text-slate-300 leading-relaxed">
-                        Through 10 randomized scenarios, we'll measure how you naturally apply:
+                        Through randomized scenarios, we'll measure how you naturally apply:
                         <span class="text-ct-blue font-semibold">Decomposition</span>,
                         <span class="text-ct-purple font-semibold">Pattern Recognition</span>,
                         <span class="text-green-400 font-semibold">Abstraction</span>, and
@@ -320,7 +320,17 @@
                     </p>
                 </div>
 
-                <button onclick="startQuiz(10)"
+                <!-- Length Selection -->
+                <div class="mb-6">
+                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-3">Select Assessment Length</p>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="setQuizLength(10)" id="btn-10" class="length-btn py-3 rounded-xl bg-slate-800 text-slate-400 font-bold border border-transparent hover:bg-slate-700 transition-all">10 Qs</button>
+                        <button onclick="setQuizLength(20)" id="btn-20" class="length-btn py-3 rounded-xl bg-slate-800 text-slate-400 font-bold border border-transparent hover:bg-slate-700 transition-all">20 Qs</button>
+                        <button onclick="setQuizLength(25)" id="btn-25" class="length-btn py-3 rounded-xl bg-ct-blue text-slate-900 font-bold border border-ct-blue shadow-[0_0_15px_rgba(96,165,250,0.3)] transition-all">25 Qs</button>
+                    </div>
+                </div>
+
+                <button onclick="startQuiz()"
                     class="w-full py-5 bg-gradient-to-r from-ct-blue via-ct-indigo to-ct-purple text-white font-bold text-lg rounded-2xl shadow-lg flex items-center justify-center gap-3 animate-pulse-glow hover:scale-[1.02] transition-transform">
                     <span>🚀</span>
                     <span>Start Assessment</span>
@@ -651,6 +661,51 @@
                     { text: "Delete everything that hasn't been opened in 2 years; don't look back. 🚮", skill: "abstract", pts: 3, emoji: "🚮" },
                     { text: "Write a script (or manual rule) to auto-move files by extension (.pdf, .png). 🤖", skill: "algo", pts: 4, emoji: "🤖" }
                 ]
+            },
+            {
+                q: "You're learning a new musical instrument. How do you begin?",
+                opts: [
+                    { text: "Break it down: Chords, Scales, Songs, Theory. 🎸", skill: "decomp", pts: 4, emoji: "🎸" },
+                    { text: "Find songs that use the same 4 chords you already know. 🎵", skill: "pattern", pts: 4, emoji: "🎵" },
+                    { text: "Just make noise and feel the rhythm; ignore the technical names. 🎶", skill: "abstract", pts: 3, emoji: "🎶" },
+                    { text: "Practice the C-major scale for 10 minutes every single day. ⏱️", skill: "algo", pts: 3, emoji: "⏱️" }
+                ]
+            },
+            {
+                q: "You're troubleshooting a Wi-Fi outage. Steps?",
+                opts: [
+                    { text: "Check modem lights, then router, then device settings. 📶", skill: "decomp", pts: 4, emoji: "📶" },
+                    { text: "Recall that rebooting usually fixes this specific blinking light. 🔄", skill: "pattern", pts: 3, emoji: "🔄" },
+                    { text: "Switch to mobile data immediately to keep working; ignore the outage. 📱", skill: "abstract", pts: 2, emoji: "📱" },
+                    { text: "Follow the ISP's official 5-step checklist for connection issues. 📋", skill: "algo", pts: 4, emoji: "📋" }
+                ]
+            },
+            {
+                q: "You're planning a week of meals for the family. Approach?",
+                opts: [
+                    { text: "List every ingredient needed for Breakfast, Lunch, and Dinner. 🥦", skill: "decomp", pts: 4, emoji: "🥦" },
+                    { text: "Rotate the same 7 meals that everyone liked last month. 🍕", skill: "pattern", pts: 4, emoji: "🍕" },
+                    { text: "Shop for 'Proteins' and 'Veggies' generally, then improvise. 🥩", skill: "abstract", pts: 3, emoji: "🥩" },
+                    { text: "Cook strictly on Sunday/Wednesday nights using a batch method. 📅", skill: "algo", pts: 3, emoji: "📅" }
+                ]
+            },
+            {
+                q: "You're mediating a dispute between colleagues. Strategy?",
+                opts: [
+                    { text: "Ask each person to write down their specific grievances separately. 📝", skill: "decomp", pts: 4, emoji: "📝" },
+                    { text: "Notice this is the same 'communication style' clash as last year. 🗣️", skill: "pattern", pts: 3, emoji: "🗣️" },
+                    { text: "Focus on the shared goal of the project, ignoring personal feelings. 🎯", skill: "abstract", pts: 4, emoji: "🎯" },
+                    { text: "Use a structured 'I feel / I need' statement protocol for the meeting. 🗣️", skill: "algo", pts: 4, emoji: "🗣️" }
+                ]
+            },
+            {
+                q: "You're organizing a surprise party. Where to start?",
+                opts: [
+                    { text: "Break it into: Guests, Venue, Food, Surprise logistics. 🎁", skill: "decomp", pts: 4, emoji: "🎁" },
+                    { text: "Copy the successful schedule from the last party you attended. 🎈", skill: "pattern", pts: 3, emoji: "🎈" },
+                    { text: "Focus entirely on the 'Vibe' and 'Music'; the rest is detail. 🎵", skill: "abstract", pts: 2, emoji: "🎵" },
+                    { text: "Create a reverse-timeline from the moment the guest arrives. ⏳", skill: "algo", pts: 4, emoji: "⏳" }
+                ]
             }
         ];
 
@@ -695,20 +750,34 @@
         // GAME STATE
         // ================================================
         let currentIndex = 0;
-        let totalQuestions = 10;
+        let totalQuestions = 25;
         let selectedQuestions = [];
         let answers = [];
         let cheatMode = false;
 
-        function startQuiz(n, mode = false) {
-            cheatMode = mode;
+        function setQuizLength(n) {
             totalQuestions = n;
+            // Reset styles
+            document.querySelectorAll('.length-btn').forEach(b => {
+                b.className = 'length-btn py-3 rounded-xl bg-slate-800 text-slate-400 font-bold border border-transparent hover:bg-slate-700 transition-all';
+            });
+            // Active style
+            const btn = document.getElementById(`btn-${n}`);
+            if(btn) {
+                btn.className = 'length-btn py-3 rounded-xl bg-ct-blue text-slate-900 font-bold border border-ct-blue shadow-[0_0_15px_rgba(96,165,250,0.3)] transition-all';
+            }
+        }
+
+        function startQuiz(n = totalQuestions, mode = false) {
+            cheatMode = mode;
+            if (typeof n === 'number') totalQuestions = n;
+            
             currentIndex = 0;
             answers = [];
 
-            // Pick 10 random questions
+            // Pick random questions
             const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
-            selectedQuestions = shuffled.slice(0, n);
+            selectedQuestions = shuffled.slice(0, totalQuestions);
 
             showScreen('quiz-screen');
             document.getElementById('cheat-banner').classList.toggle('hidden', !cheatMode);
