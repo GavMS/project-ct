@@ -483,11 +483,17 @@
                     </div>
                     <p id="ct-desc" class="text-xs text-slate-400 leading-relaxed text-left"></p>
 
-                    <!-- Personal Insight -->
+                    <!-- Personal Insight (Top 2 Combined) -->
                     <div class="bg-ct-blue/5 rounded-2xl p-4 mt-6 text-left border border-ct-blue/10">
-                        <p class="text-[10px] font-bold text-ct-blue uppercase mb-1">🔍 Critical Insight</p>
+                        <p class="text-[10px] font-bold text-ct-blue uppercase mb-1">🔍 Critical Insight — Top 2 Strengths</p>
                         <p id="insight-text" class="text-xs text-slate-300 leading-relaxed"></p>
                     </div>
+                </div>
+
+                <!-- All 4 Skill Insights -->
+                <div class="bg-white/5 rounded-3xl p-6 mb-8 border border-white/10">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Pillar-by-Pillar Insight</p>
+                    <div id="all-skill-insights" class="space-y-3"></div>
                 </div>
 
                 <button onclick="resetQuiz()"
@@ -972,14 +978,78 @@
                 }, 500 + i * 100);
             });
 
-            // Personal Insight Logic
-            let insight = "";
-            if (dominantSkill === 'decomp') insight = "Because you excel at Decomposition, you are best suited for Project Management or Systems Engineering. You prevent teams from feeling overwhelmed by maintaining a clear, granular vision.";
-            if (dominantSkill === 'pattern') insight = "Your Pattern Recognition strength makes you an ideal Analyst or Strategist. You can predict trends and outcomes because you see history repeating itself where others see chaos.";
-            if (dominantSkill === 'abstract') insight = "Your Abstraction power is rare. You'd thrive as a Creative Director or High-Level Architect. You keep systems lean by removing the weight of unnecessary complexity.";
-            if (dominantSkill === 'algo') insight = "Your Algorithmic thinking is built for Automation and Scale. You are the 'Efficiency Expert' of any group, ensuring work is done perfectly, every single time.";
+            // ---- Top 2 Combined Insight ----
+            const sortedSkills = Object.keys(counts).sort((a, b) => {
+                if (counts[b] !== counts[a]) return counts[b] - counts[a];
+                return ptSums[b] - ptSums[a];
+            });
+            const top1 = sortedSkills[0];
+            const top2 = sortedSkills[1];
 
-            document.getElementById('insight-text').textContent = insight;
+            const comboInsights = {
+                'decomp+pattern': "Your combination of Decomposition and Pattern Recognition makes you a diagnostic powerhouse. You break systems apart AND spot the recurring flaws—ideal for Consulting, Data Analysis, or Quality Assurance.",
+                'decomp+abstract': "Decomposition paired with Abstraction is rare. You can dissect complexity and strip it to its essence simultaneously—a skill set perfect for Systems Architecture, UX Strategy, or Technical Leadership.",
+                'decomp+algo': "You marry structural clarity with procedural precision. Decomposition + Algorithms means you don't just plan, you build foolproof systems—think Project Management, DevOps, or Operations Engineering.",
+                'pattern+abstract': "Pattern Recognition with Abstraction gives you an almost intuitive strategic mind. You see what repeats AND what truly matters—ideal for Strategic Planning, Research, or Creative Direction.",
+                'pattern+algo': "You recognize what works AND encode it into repeatable processes. Pattern Recognition + Algorithms is the secret weapon of Automation Engineers, Data Scientists, and Process Optimizers.",
+                'abstract+algo': "Abstraction combined with Algorithms means you cut through noise and create elegant, step-by-step solutions. You're built for Software Engineering, Scientific Research, or Lean Management."
+            };
+
+            const comboKey = [top1, top2].sort().join('+');
+            const comboInsight = comboInsights[comboKey] || "Your top two skills form a unique problem-solving profile that balances analytical depth with practical execution.";
+            document.getElementById('insight-text').textContent = comboInsight;
+
+            // ---- Individual Insight for All 4 Skills ----
+            const skillInsightsByLevel = {
+                decomp: {
+                    high: "🧩 Decomposition is a core strength. You instinctively break complex problems into manageable pieces, keeping yourself and others organized under pressure.",
+                    mid: "🧩 Decomposition is developing well. You often break things down, though occasionally you may tackle problems as a whole when a more modular approach would help.",
+                    low: "🧩 Decomposition is an area for growth. Try practicing 'divide and conquer'—split your next big task into 3-5 subtasks before starting."
+                },
+                pattern: {
+                    high: "🔍 Pattern Recognition is a standout ability. You naturally connect dots across different experiences, letting you learn faster and predict outcomes.",
+                    mid: "🔍 Pattern Recognition is solid. You often leverage past experience, but building a habit of actively looking for parallels could sharpen this skill further.",
+                    low: "🔍 Pattern Recognition has room to grow. Try keeping a journal of problems you solve—you'll start noticing recurring themes across different situations."
+                },
+                abstract: {
+                    high: "💡 Abstraction is one of your superpowers. You cut through noise to find the essential truth of a problem, making you highly efficient and focused.",
+                    mid: "💡 Abstraction is at a healthy level. You can simplify when needed, though sometimes you may get pulled into details that aren't critical.",
+                    low: "💡 Abstraction could use attention. Practice asking 'What is the ONE thing that matters here?' before diving into details of any problem."
+                },
+                algo: {
+                    high: "⚙️ Algorithmic Thinking is a defining strength. You create reliable, repeatable processes that ensure consistent quality—a hallmark of systematic excellence.",
+                    mid: "⚙️ Algorithmic Thinking is progressing. You follow structured approaches often, but creating your own step-by-step methods could bring you to the next level.",
+                    low: "⚙️ Algorithmic Thinking is an opportunity area. Next time you solve something well, write down the exact steps—you'll build a personal playbook over time."
+                }
+            };
+
+            const insightsContainer = document.getElementById('all-skill-insights');
+            insightsContainer.innerHTML = '';
+            const skillColorMap = { decomp: 'ct-blue', pattern: 'ct-purple', abstract: 'green-400', algo: 'amber-400' };
+
+            sortedSkills.forEach((key, i) => {
+                const pct = Math.round((counts[key] / totalQuestions) * 100);
+                let level = 'low';
+                if (pct >= 35) level = 'mid';
+                if (pct >= 50) level = 'high';
+                const insightTxt = skillInsightsByLevel[key][level];
+                const s = skillInfo[key];
+                const colorClass = skillColorMap[key];
+                const rank = i + 1;
+                const rankLabel = rank <= 2 ? `<span class="text-${colorClass} font-bold">#${rank} Strength</span>` : `<span class="text-slate-500">#${rank}</span>`;
+
+                const card = document.createElement('div');
+                card.className = 'bg-white/[0.03] rounded-2xl p-4 border border-white/5 text-left opacity-0 animate-fade-in';
+                card.style.animationDelay = `${0.4 + i * 0.15}s`;
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs font-bold text-${colorClass}">${s.emoji} ${s.name}</span>
+                        ${rankLabel}
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">${insightTxt}</p>
+                `;
+                insightsContainer.appendChild(card);
+            });
         }
 
         // ================================================
