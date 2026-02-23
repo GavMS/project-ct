@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CT Skills Meter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Outfit', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        'ct-blue': '#60A5FA',
+                        'ct-indigo': '#6366F1',
+                        'ct-purple': '#8B5CF6',
+                        'ct-deep': '#4338CA',
+                        'tech-dark': '#0F172A',
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'bounce-subtle': 'bounceSubtle 2s infinite',
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.4s ease-out forwards',
+                        'scale-in': 'scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        bounceSubtle: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '50%': { transform: 'translateX(5px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)' },
+                            '50%': { boxShadow: '0 0 40px rgba(99, 102, 241, 0.6)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(15px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        scaleIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.8)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+            }
+        }
+
+        @keyframes selectPop {
+            0% {
+                transform: scale(1);
+            }
+
+            30% {
+                transform: scale(1.04);
+            }
+
+            60% {
+                transform: scale(0.98);
+            }
+
+            100% {
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes rippleAnim {
+            0% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-10vh) rotateZ(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotateZ(720deg);
+                opacity: 0;
+            }
+        }
+
+        .bar-decomp {
+            background: linear-gradient(to right, #60A5FA, #3B82F6);
+        }
+
+        .bar-pattern {
+            background: linear-gradient(to right, #A78BFA, #8B5CF6);
+        }
+
+        .bar-abstract {
+            background: linear-gradient(to right, #34D399, #10B981);
+        }
+
+        .bar-algo {
+            background: linear-gradient(to right, #FBBF24, #F59E0B);
+        }
+
+        body {
+            background: radial-gradient(circle at top left, #1e1b4b, #0f172a),
+                linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 24px 64px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .option-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .option-btn:not(:disabled):hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
+            border-color: #818CF8;
+        }
+
+        .option-btn:not(:disabled):active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.selected-correct {
+            border-color: #6366F1;
+            background: rgba(99, 102, 241, 0.1);
+            animation: selectPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+        }
+
+        .progress-fill {
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .screen {
+            display: none;
+            opacity: 0;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .eq-bar-fill {
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 10px;
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+            animation: rippleAnim 0.6s ease-out forwards;
+            pointer-events: none;
+        }
+
+        .confetti-piece {
+            position: fixed;
+            top: -20px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .floating-node {
+            position: fixed;
+            bottom: -30px;
+            pointer-events: none;
+            z-index: 0;
+            animation: float linear forwards;
+            opacity: 0.2;
+        }
+
+        .btn-hidden {
+            display: none !important;
+        }
+
+        #next-btn {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body class="font-body antialiased p-4">
+
+    <div class="w-full max-w-lg glass-card rounded-[2.5rem] p-6 md:p-10 relative overflow-y-auto max-h-[95vh] z-10">
+
+        <!-- ====== START SCREEN ====== -->
+        <div id="start-screen" class="screen active">
+            <div class="text-center">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-ct-blue to-ct-purple rounded-3xl flex items-center justify-center text-white shadow-xl mx-auto mb-6 animate-float">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                </div>
+                <h1
+                    class="font-display font-extrabold text-4xl bg-gradient-to-r from-ct-blue via-ct-indigo to-ct-purple bg-clip-text text-transparent mb-3">
+                    CT Skills Meter
+                </h1>
+                <p class="text-xs text-slate-500 mb-2">Computational Thinking Assessment v2.0</p>
+                <p class="text-slate-400 text-sm md:text-base mb-6">Quantify your problem-solving DNA across 4 core
+                    pillars of Computational Thinking. Accurate, fast, and scenario-based.</p>
+
+                <div class="bg-white/5 rounded-2xl p-4 mb-8 border border-white/10 text-left">
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        Through 10 randomized scenarios, we'll measure how you naturally apply:
+                        <span class="text-ct-blue font-semibold">Decomposition</span>,
+                        <span class="text-ct-purple font-semibold">Pattern Recognition</span>,
+                        <span class="text-green-400 font-semibold">Abstraction</span>, and
+                        <span class="text-amber-400 font-semibold">Algorithms</span>.
+                    </p>
+                </div>
+
+                <button onclick="startQuiz(10)"
+                    class="w-full py-5 bg-gradient-to-r from-ct-blue via-ct-indigo to-ct-purple text-white font-bold text-lg rounded-2xl shadow-lg flex items-center justify-center gap-3 animate-pulse-glow hover:scale-[1.02] transition-transform">
+                    <span>🚀</span>
+                    <span>Start Assessment</span>
+                    <span>→</span>
+                </button>
+
+                <!-- Dev Mode Toggle -->
+                <div class="mt-8">
+                    <button onclick="toggleDevLogin()"
+                        class="text-[10px] text-slate-600 hover:text-slate-400 transition-colors cursor-pointer mx-auto block">
+                        🔒 System Admin
+                    </button>
+                    <div id="dev-login"
+                        class="hidden mt-2 bg-slate-900 border border-slate-800 rounded-xl p-3 text-center space-y-2">
+                        <input id="dev-password" type="password" placeholder="Key..."
+                            class="w-full px-3 py-2 text-xs rounded-lg border border-slate-800 bg-slate-950 focus:outline-none focus:ring-2 focus:ring-ct-blue text-slate-300"
+                            onkeydown="if(event.key==='Enter') checkDevPassword()">
+                        <button onclick="checkDevPassword()"
+                            class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-lg transition-colors">Auth</button>
+                    </div>
+                    <div id="dev-buttons" class="hidden mt-2 space-y-2">
+                        <p class="text-[10px] text-emerald-500 font-semibold text-center">ACCESS GRANTED</p>
+                        <button onclick="startQuiz(10, 'low')"
+                            class="w-full py-3 bg-slate-800 text-slate-300 font-bold text-sm rounded-2xl shadow-md flex items-center justify-center gap-2"><span>📉</span><span>Test
+                                Low Score</span></button>
+                        <button onclick="startQuiz(10, 'high')"
+                            class="w-full py-3 bg-ct-deep text-white font-bold text-sm rounded-2xl shadow-md flex items-center justify-center gap-2"><span>📈</span><span>Test
+                                High Score</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== QUIZ SCREEN ====== -->
+        <div id="quiz-screen" class="screen">
+            <header class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-2">
+                    <div
+                        class="w-9 h-9 bg-gradient-to-br from-ct-blue to-ct-indigo rounded-xl flex items-center justify-center text-white shadow-lg animate-float">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h1
+                        class="font-display font-bold text-xl bg-gradient-to-r from-ct-blue to-ct-purple bg-clip-text text-transparent">
+                        CT Meter</h1>
+                </div>
+                <div class="bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                    <span id="progress-label" class="text-xs font-semibold text-ct-blue">1 / 10</span>
+                </div>
+            </header>
+
+            <!-- Banner for Dev Modes -->
+            <div id="cheat-banner"
+                class="hidden bg-slate-900 border border-ct-blue/30 rounded-2xl px-4 py-2 mb-4 flex items-center justify-between gap-2">
+                <span class="cheat-label text-xs font-bold text-ct-blue uppercase">Debug Active</span>
+                <button onclick="autoPlayAll()"
+                    class="text-[11px] bg-ct-blue/20 hover:bg-ct-blue/30 text-ct-blue font-bold px-3 py-1 rounded-full transition-colors">⚡
+                    Skip All</button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full h-2 bg-white/5 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar"
+                    class="progress-fill h-full bg-gradient-to-r from-ct-blue to-ct-purple rounded-full"
+                    style="width: 0%"></div>
+            </div>
+
+            <!-- Question -->
+            <main>
+                <div id="question-container">
+                    <h2 id="question-text" class="text-lg md:text-xl font-bold leading-snug text-slate-100 mb-6"></h2>
+                    <div id="options-container" class="flex flex-col gap-3"></div>
+                </div>
+
+                <div class="flex justify-end mt-8">
+                    <button id="next-btn"
+                        class="btn-hidden py-3 px-8 bg-slate-100 text-slate-900 font-bold rounded-2xl items-center justify-center gap-2 shadow-xl hover:bg-white transition-all active:scale-95 group">
+                        <span id="next-btn-text">Continue</span>
+                        <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    </button>
+                </div>
+            </main>
+        </div>
+
+        <!-- ====== RESULTS SCREEN ====== -->
+        <div id="results-screen" class="screen">
+            <div class="text-center">
+                <div class="text-6xl mb-4" id="result-emoji">🧠</div>
+                <h2
+                    class="font-display font-extrabold text-2xl md:text-3xl bg-gradient-to-r from-ct-blue via-ct-indigo to-ct-purple bg-clip-text text-transparent mb-2">
+                    Analysis Complete
+                </h2>
+                <p class="text-slate-500 text-xs mb-8">Systematic breakdown of your mental processing patterns</p>
+
+                <!-- Primary Skill Result -->
+                <div
+                    class="bg-gradient-to-br from-ct-blue/10 to-ct-purple/10 rounded-3xl p-6 mb-6 border border-white/10 text-left">
+                    <p class="text-[10px] font-bold text-ct-blue uppercase tracking-widest mb-2">Dominant Skill Pillar
+                    </p>
+                    <h3 id="skill-title" class="font-display font-bold text-2xl text-slate-100 mb-2"></h3>
+                    <p id="skill-desc" class="text-sm text-slate-400 leading-relaxed"></p>
+                </div>
+
+                <!-- CT Skill Statistics -->
+                <div class="bg-white/5 rounded-3xl p-6 mb-6 border border-white/10">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Mental Processing
+                        Distribution</p>
+                    <div id="skill-bars" class="space-y-4"></div>
+                </div>
+
+                <!-- Accuracy / Overall Score -->
+                <div class="bg-slate-900/50 rounded-3xl p-6 mb-8 border border-white/5">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Overall Proficiency
+                        Score</p>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 id="ct-level" class="font-display font-bold text-xl text-slate-100"></h3>
+                        <span id="ct-score-text" class="text-xl font-bold text-ct-blue">0/100</span>
+                    </div>
+                    <div class="w-full h-3 bg-white/5 rounded-full overflow-hidden mb-4">
+                        <div id="ct-bar"
+                            class="eq-bar-fill h-full rounded-full bg-gradient-to-r from-ct-blue to-ct-indigo"
+                            style="width: 0%"></div>
+                    </div>
+                    <p id="ct-desc" class="text-xs text-slate-400 leading-relaxed text-left"></p>
+
+                    <!-- Personal Insight -->
+                    <div class="bg-ct-blue/5 rounded-2xl p-4 mt-6 text-left border border-ct-blue/10">
+                        <p class="text-[10px] font-bold text-ct-blue uppercase mb-1">🔍 Critical Insight</p>
+                        <p id="insight-text" class="text-xs text-slate-300 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <button onclick="resetQuiz()"
+                    class="w-full py-4 bg-gradient-to-r from-ct-blue to-ct-indigo text-white font-bold rounded-2xl shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all">
+                    <span>🔄</span>
+                    <span>Recalibrate</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================
+        // CT SKILL QUESTIONS (20 items)
+        // Skills: decomp (breaking down), pattern (repeats), abstract (filtering), algo (ordered steps)
+        // Points: pts (1-4) reflecting depth of proficiency
+        // ================================================
+        const allQuestions = [
+            {
+                q: "You're planning a massive 100-person wedding from scratch. Where do you start?",
+                opts: [
+                    { text: "Break it into categories: Venue, Guest List, Food, and Music. Solve one at a time. 📋", skill: "decomp", pts: 4, emoji: "📋" },
+                    { text: "Think about the weddings you've attended before and list things they all had in common. 🔍", skill: "pattern", pts: 3, emoji: "🔍" },
+                    { text: "Focus purely on the 'vibe' and essential elements that make people happy, ignoring minor details. 🎭", skill: "abstract", pts: 3, emoji: "🎭" },
+                    { text: "Write a strict chronological checklist of tasks from 'today' to 'wedding day'. ⏳", skill: "algo", pts: 3, emoji: "⏳" }
+                ]
+            },
+            {
+                q: "You're learning a complex new strategy board game. How do you approach the rules?",
+                opts: [
+                    { text: "Learn how tokens move first, then how combat works, then how winning is calculated. 🧱", skill: "decomp", pts: 3, emoji: "🧱" },
+                    { text: "Compare it to other games you know to quickly identify familiar mechanics. 🃏", skill: "pattern", pts: 4, emoji: "🃏" },
+                    { text: "Ignore the thematic lore and flavor text; just focus on the core logical mechanics. 🧩", skill: "abstract", pts: 4, emoji: "🧩" },
+                    { text: "Read the 'First Turn' example and follow exactly those steps to see how it plays. 📖", skill: "algo", pts: 3, emoji: "📖" }
+                ]
+            },
+            {
+                q: "Your computer is suddenly running extremely slowly. Your first move?",
+                opts: [
+                    { text: "Open Activity Monitor and check CPU, RAM, and Disk separately to find the culprit. 💻", skill: "decomp", pts: 4, emoji: "💻" },
+                    { text: "Think: 'Was I doing something specific last time this happened?' 🧠", skill: "pattern", pts: 4, emoji: "🧠" },
+                    { text: "Restart the machine to clear all temporary data and background noise. 🔄", skill: "abstract", pts: 2, emoji: "🔄" },
+                    { text: "Trial-and-error: Close every single app one-by-one until it speeds up. 🖱️", skill: "algo", pts: 2, emoji: "🖱️" }
+                ]
+            },
+            {
+                q: "You need to cook a complex 5-course dinner for friends alone. How do you manage?",
+                opts: [
+                    { text: "Prep all ingredients for all recipes at once before turning on any heat. 🔪", skill: "decomp", pts: 3, emoji: "🔪" },
+                    { text: "Identify which ingredients are used in multiple dishes to save time. 🧅", skill: "pattern", pts: 4, emoji: "🧅" },
+                    { text: "Simplify the recipes down to their core flavors to reduce cooking time. 🧂", skill: "abstract", pts: 3, emoji: "🧂" },
+                    { text: "Create a minute-by-minute schedule of when every dish enters and exits the oven. 🕒", skill: "algo", pts: 4, emoji: "🕒" }
+                ]
+            },
+            {
+                q: "You're trying to save money this month. What's your strategy?",
+                opts: [
+                    { text: "Categorize every receipt into: Rent, Food, Utilities, and Fun. 💵", skill: "decomp", pts: 3, emoji: "💵" },
+                    { text: "Look at past bank statements to find recurring subscriptions you don't use. 📝", skill: "pattern", pts: 4, emoji: "📝" },
+                    { text: "Set a single daily spend limit and stop thinking about individual item costs. 🛑", skill: "abstract", pts: 4, emoji: "🛑" },
+                    { text: "Whenever you want to buy something, wait exactly 48 hours before purchasing. ⏱️", skill: "algo", pts: 3, emoji: "⏱️" }
+                ]
+            },
+            {
+                q: "You're teaching a child how to tie their shoes. How do you explain it?",
+                opts: [
+                    { text: "Show how to make one loop, then how to hold the other lace separately. 👟", skill: "decomp", pts: 4, emoji: "👟" },
+                    { text: "Say 'It's like wrapping a present, but for your feet.' 🎁", skill: "pattern", pts: 2, emoji: "🎁" },
+                    { text: "Don't focus on the 'bunny ears' story; just show the tension and friction needed. 🧵", skill: "abstract", pts: 3, emoji: "🧵" },
+                    { text: "Record a 5-step checklist: 1. Cross, 2. Under, 3. Pull, 4. Loop, 5. Knot. ✅", skill: "algo", pts: 4, emoji: "✅" }
+                ]
+            },
+            {
+                q: "You're writing a 10-page research paper. What's your method?",
+                opts: [
+                    { text: "Write the outline first: Intro, 3 Arguments, and Conclusion. 📑", skill: "decomp", pts: 4, emoji: "📑" },
+                    { text: "Read successful papers in the field and mimic their structural flow. 📄", skill: "pattern", pts: 3, emoji: "📄" },
+                    { text: "Summarize the core thesis in one sentence and build everything around that. 🎯", skill: "abstract", pts: 4, emoji: "🎯" },
+                    { text: "Set a timer and force yourself to write exactly 500 words per hour. ⌨️", skill: "algo", pts: 3, emoji: "⌨️" }
+                ]
+            },
+            {
+                q: "You're organizing a messy garage. How do you sort the items?",
+                opts: [
+                    { text: "Group them by context: Gardening tools, Car parts, Holiday decor. 📦", skill: "decomp", pts: 3, emoji: "📦" },
+                    { text: "Put things you use every week at the front, and seasonal things at the back. 🗓️", skill: "pattern", pts: 4, emoji: "🗓️" },
+                    { text: "Throw away everything that hasn't been touched in a year, ignoring sentiment. 🗑️", skill: "abstract", pts: 4, emoji: "🗑️" },
+                    { text: "Label every box with a unique ID and keep a master list on your phone. 🏷️", skill: "algo", pts: 4, emoji: "🏷️" }
+                ]
+            },
+            {
+                q: "A friend is telling a long, confusing story. How do you process it?",
+                opts: [
+                    { text: "Separate the 'who', 'what', and 'where' in your mind. 👤", skill: "decomp", pts: 3, emoji: "👤" },
+                    { text: "Notice that this scenario sounds exactly like a movie you've seen before. 🎬", skill: "pattern", pts: 3, emoji: "🎬" },
+                    { text: "Filter out the side-details and just listen for the main point of conflict. 🔊", skill: "abstract", pts: 4, emoji: "🔊" },
+                    { text: "Wait for each event to be told in chronological order before making a judgment. 🕰️", skill: "algo", pts: 2, emoji: "🕰️" }
+                ]
+            },
+            {
+                q: "You're lost in a city without GPS. What do you do?",
+                opts: [
+                    { text: "Look for landmarks: a tall tower, a river, a main road. 🗼", skill: "decomp", pts: 3, emoji: "🗼" },
+                    { text: "Remember that the sun sets in the West and use shadows for direction. ☀️", skill: "pattern", pts: 4, emoji: "☀️" },
+                    { text: "Focus only on your general direction (North) and ignore street names. 🧭", skill: "abstract", pts: 4, emoji: "🧭" },
+                    { text: "Follow the 'Always Turn Right' rule until you hit a familiar street. ↪️", skill: "algo", pts: 3, emoji: "↪️" }
+                ]
+            },
+            {
+                q: "You're debugging a piece of code (or a faulty machine). Where do you look?",
+                opts: [
+                    { text: "Isolate parts of the system and test them one by one. 🔍", skill: "decomp", pts: 4, emoji: "🔍" },
+                    { text: "Search online to see if anyone else has had this exact error before. 🌐", skill: "pattern", pts: 3, emoji: "🌐" },
+                    { text: "Check common fail points: Is it plugged in? Is the logic sound? ⚡", skill: "abstract", pts: 3, emoji: "⚡" },
+                    { text: "Trace the execution from the very first line to find where it breaks. 🧵", skill: "algo", pts: 4, emoji: "🧵" }
+                ]
+            },
+            {
+                q: "You're choosing a new smartphone. How do you decide?",
+                opts: [
+                    { text: "Compare individual specs: Camera, Battery life, Price, and Screen. 📊", skill: "decomp", pts: 4, emoji: "📊" },
+                    { text: "Stick with the brand you've had for 5 years because it 'just works'. 📱", skill: "pattern", pts: 2, emoji: "📱" },
+                    { text: "Ignore the marketing fluff; what is the singular most important feature for you? 💡", skill: "abstract", pts: 4, emoji: "💡" },
+                    { text: "Run a 'elimination' process: remove every phone that doesn't meet 3 criteria. ❌", skill: "algo", pts: 3, emoji: "❌" }
+                ]
+            },
+            {
+                q: "You're packing for a 2-week trip with only a carry-on. Strategy?",
+                opts: [
+                    { text: "List every day's outfit and pack them as separate bundles. 🎒", skill: "decomp", pts: 4, emoji: "🎒" },
+                    { text: "Choose a 'capsule wardrobe' where every piece matches every other piece. 👕", skill: "pattern", pts: 4, emoji: "👕" },
+                    { text: "Pack just the bare essentials and plan to buy everything else there. 🧴", skill: "abstract", pts: 3, emoji: "🧴" },
+                    { text: "Use the 'rolling method' for every item to maximize volume efficiency. 🗞️", skill: "algo", pts: 3, emoji: "🗞️" }
+                ]
+            },
+            {
+                q: "You're trying to improve your fitness. How do you build a plan?",
+                opts: [
+                    { text: "Separate your goals: Diet, Cardio, and Strength. 🥗", skill: "decomp", pts: 3, emoji: "🥗" },
+                    { text: "Find a training program that worked for someone with your body type. 🏃‍♂️", skill: "pattern", pts: 4, emoji: "🏃‍♂️" },
+                    { text: "Focus purely on one metric: How much energy do I feel today? 🔋", skill: "abstract", pts: 2, emoji: "🔋" },
+                    { text: "Follow a '5x5' program: 5 specific exercises, 5 sets, 5 reps. 🔢", skill: "algo", pts: 4, emoji: "🔢" }
+                ]
+            },
+            {
+                q: "You need to learn a new language. How do you start?",
+                opts: [
+                    { text: "Learn the 100 most common nouns, then the 50 most common verbs. 🗣️", skill: "decomp", pts: 4, emoji: "🗣️" },
+                    { text: "Identify words that sound similar to your native language (cognates). 👂", skill: "pattern", pts: 4, emoji: "👂" },
+                    { text: "Focus on understanding the intention of speaker rather than every word. 💭", skill: "abstract", pts: 4, emoji: "💭" },
+                    { text: "Complete one Duolingo lesson every morning at 8:00 AM sharp. 📱", skill: "algo", pts: 2, emoji: "📱" }
+                ]
+            },
+            {
+                q: "You're designing a vegetable garden. How do you place the plants?",
+                opts: [
+                    { text: "Map out square-foot zones for each specific vegetable type. 🥕", skill: "decomp", pts: 3, emoji: "🥕" },
+                    { text: "Plant things together that survived well in previous years. 🌻", skill: "pattern", pts: 3, emoji: "🌻" },
+                    { text: "Think about the sun's path and water needs; ignore purely aesthetic choices. ☀️", skill: "abstract", pts: 4, emoji: "☀️" },
+                    { text: "Follow a companion planting guide: 'Tomato goes next to Basil'. 🌿", skill: "algo", pts: 4, emoji: "🌿" }
+                ]
+            },
+            {
+                q: "You're leading a team project. How do you assign roles?",
+                opts: [
+                    { text: "Analyze the total work and split it into 5 distinct sub-projects. 🤝", skill: "decomp", pts: 4, emoji: "🤝" },
+                    { text: "Assign tasks based on each person's proven historical strengths. 🏆", skill: "pattern", pts: 4, emoji: "🏆" },
+                    { text: "Define the one single outcome we need and let people choose how to get there. 🏁", skill: "abstract", pts: 3, emoji: "🏁" },
+                    { text: "Create a shared 'Agile' board with 'To-Do', 'In Progress', and 'Done'. 📋", skill: "algo", pts: 4, emoji: "📋" }
+                ]
+            },
+            {
+                q: "You're writing a sci-fi novel. How do you build the world?",
+                opts: [
+                    { text: "Develop the Politics, Technology, and Religion as separate systems. 🛸", skill: "decomp", pts: 3, emoji: "🛸" },
+                    { text: "Use existing historical empires as a blueprint for your alien societies. 🏛️", skill: "pattern", pts: 4, emoji: "🏛️" },
+                    { text: "Identify the one core 'What If?' question and ignore everything else. ❓", skill: "abstract", pts: 4, emoji: "❓" },
+                    { text: "Follow the 'Hero's Journey' 12-step plot structure strictly. 🦸", skill: "algo", pts: 3, emoji: "🦸" }
+                ]
+            },
+            {
+                q: "You're baking a cake for the first time. What's your approach?",
+                opts: [
+                    { text: "Measure every ingredient precisely into separate bowls before mixing. 🥣", skill: "decomp", pts: 4, emoji: "🥣" },
+                    { text: "Realize it's basically the same ratio as the cookies you made last week. 🍪", skill: "pattern", pts: 3, emoji: "🍪" },
+                    { text: "Search for a 'No-Bake' or simplified 3-ingredient version of the cake. ✨", skill: "abstract", pts: 2, emoji: "✨" },
+                    { text: "Follow the recipe exactly, checking off every step as you finish it. 🧾", skill: "algo", pts: 4, emoji: "🧾" }
+                ]
+            },
+            {
+                q: "You're cleaning up a massive digital file library. Strategy?",
+                opts: [
+                    { text: "Create a hierarchical folder structure: Work -> Projects -> 2024. 📁", skill: "decomp", pts: 4, emoji: "📁" },
+                    { text: "Use a standardized naming convention: YYYY-MM-DD-filename. 🔖", skill: "pattern", pts: 4, emoji: "🔖" },
+                    { text: "Delete everything that hasn't been opened in 2 years; don't look back. 🚮", skill: "abstract", pts: 3, emoji: "🚮" },
+                    { text: "Write a script (or manual rule) to auto-move files by extension (.pdf, .png). 🤖", skill: "algo", pts: 4, emoji: "🤖" }
+                ]
+            }
+        ];
+
+        // ================================================
+        // CT SKILL DATA
+        // ================================================
+        const skillInfo = {
+            decomp: {
+                name: "Decomposition",
+                emoji: "🧩",
+                desc: "You are a Specialist detail-oriented thinker! Your first instinct is to break massive, scary projects into manageable bite-sized tasks. Nothing is 'too big' for you because you know it's just a collection of smaller parts. You are the architect of clarity.",
+                color: "from-ct-blue to-blue-600"
+            },
+            pattern: {
+                name: "Pattern Recognition",
+                emoji: "🔍",
+                desc: "You have a hawk-eye for connections! You see recurring themes across completely different fields. You don't start from zero—you leverage prior knowledge and similar experiences to solve new problems at light speed. You are the master of 'I've seen this before'.",
+                color: "from-ct-purple to-purple-600"
+            },
+            abstract: {
+                name: "Abstraction",
+                emoji: "💡",
+                desc: "You are a master of focus! You can filter out distracting noise and zero in on the core essence of a problem. You ignore irrelevant details to find the efficient 'big picture' solution. You are the minimalist problem-solver who values intelligence over effort.",
+                color: "from-green-400 to-green-600"
+            },
+            algo: {
+                name: "Algorithms",
+                emoji: "⚙️",
+                desc: "You are the ultimate system-builder! You think in step-by-step logic, creating repeatable processes that ensure high quality every time. You don't just solve a problem once; you create a plan so it can be solved forever. You are a systematic power-user.",
+                color: "from-amber-400 to-amber-600"
+            }
+        };
+
+        const ctLevels = [
+            { min: 0, max: 35, label: "Explorer 🌱", desc: "You're beginning to apply systematic logic to your decisions. You often rely on intuition, which is great, but could benefit from more structured analysis." },
+            { min: 36, max: 65, label: "Strategist 🌿", desc: "You have a solid grasp of computational thinking. You naturally break down problems and look for patterns, making you a reliable and efficient thinker." },
+            { min: 66, max: 85, label: "Architect 🌟", desc: "Your mental framework is highly optimized. You solve complex problems with refined logic, often automating or simplifying systems without even trying." },
+            { min: 86, max: 100, label: "Superuser ✨", desc: "Your logic is flawless. You exhibit elite-level computational thinking, navigating complexity with extreme precision and structural depth. You are a logical powerhouse." }
+        ];
+
+        // ================================================
+        // GAME STATE
+        // ================================================
+        let currentIndex = 0;
+        let totalQuestions = 10;
+        let selectedQuestions = [];
+        let answers = [];
+        let cheatMode = false;
+
+        function startQuiz(n, mode = false) {
+            cheatMode = mode;
+            totalQuestions = n;
+            currentIndex = 0;
+            answers = [];
+
+            // Pick 10 random questions
+            const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+            selectedQuestions = shuffled.slice(0, n);
+
+            showScreen('quiz-screen');
+            document.getElementById('cheat-banner').classList.toggle('hidden', !cheatMode);
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = selectedQuestions[currentIndex];
+            const container = document.getElementById('options-container');
+
+            document.getElementById('progress-label').textContent = `${currentIndex + 1} / ${totalQuestions}`;
+            document.getElementById('progress-bar').style.width = `${(currentIndex / totalQuestions) * 100}%`;
+            document.getElementById('next-btn').classList.add('btn-hidden');
+            document.getElementById('next-btn-text').textContent = currentIndex === totalQuestions - 1 ? 'Analyze Results' : 'Next Scenario';
+
+            document.getElementById('question-text').textContent = q.q;
+            container.innerHTML = '';
+
+            q.opts.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full p-4 rounded-3xl bg-white/5 border border-white/10 text-left flex items-center gap-4 group opacity-0 animate-slide-up';
+                btn.style.animationDelay = `${0.1 + i * 0.1}s`;
+                btn.innerHTML = `
+                    <span class="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-xl group-hover:bg-ct-blue/20 transition-colors">${opt.emoji}</span>
+                    <span class="text-sm font-medium text-slate-300 flex-1">${opt.text}</span>
+                `;
+                btn.onclick = (e) => selectOption(i, btn, e);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectOption(idx, btn, event) {
+            const q = selectedQuestions[currentIndex];
+            const opt = q.opts[idx];
+
+            // Ripple
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple-effect';
+            const rect = btn.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (event.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (event.clientY - rect.top - size / 2) + 'px';
+            btn.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+
+            // Logic
+            if (answers[currentIndex]) answers.pop();
+            answers.push({ skill: opt.skill, pts: opt.pts });
+
+            // UI
+            document.querySelectorAll('.option-btn').forEach(b => {
+                b.classList.remove('selected-correct');
+                b.classList.add('opacity-40');
+            });
+            btn.classList.add('selected-correct');
+            btn.classList.remove('opacity-40');
+
+            const next = document.getElementById('next-btn');
+            next.classList.remove('btn-hidden');
+            next.classList.add('animate-scale-in');
+        }
+
+        document.getElementById('next-btn').onclick = () => {
+            currentIndex++;
+            if (currentIndex >= totalQuestions) {
+                showResults();
+            } else {
+                loadQuestion();
+            }
+        };
+
+        function showResults() {
+            const counts = { decomp: 0, pattern: 0, abstract: 0, algo: 0 };
+            const ptSums = { decomp: 0, pattern: 0, abstract: 0, algo: 0 };
+            let totalPts = 0;
+
+            answers.forEach(a => {
+                counts[a.skill]++;
+                ptSums[a.skill] += a.pts;
+                totalPts += a.pts;
+            });
+
+            // Dominant Skill (weighted by counts then pts)
+            const dominantSkill = Object.keys(counts).reduce((a, b) => counts[a] >= counts[b] ? a : b);
+            const info = skillInfo[dominantSkill];
+
+            // Overall Score (out of 100)
+            const maxPossible = totalQuestions * 4;
+            const score = Math.round((totalPts / maxPossible) * 100);
+            const level = ctLevels.find(l => score >= l.min && score <= l.max);
+
+            showScreen('results-screen');
+            spawnConfetti();
+
+            document.getElementById('result-emoji').textContent = info.emoji;
+            document.getElementById('skill-title').textContent = info.name;
+            document.getElementById('skill-desc').textContent = info.desc;
+            document.getElementById('ct-level').textContent = level.label;
+            document.getElementById('ct-score-text').textContent = `${score}/100`;
+            document.getElementById('ct-desc').textContent = level.desc;
+
+            setTimeout(() => {
+                document.getElementById('ct-bar').style.width = `${score}%`;
+            }, 300);
+
+            // Skill Bars
+            const barContainer = document.getElementById('skill-bars');
+            barContainer.innerHTML = '';
+            Object.keys(counts).forEach((key, i) => {
+                const s = skillInfo[key];
+                const pct = Math.round((counts[key] / totalQuestions) * 100);
+                const bar = document.createElement('div');
+                bar.className = 'opacity-0 animate-fade-in-up';
+                bar.style.animationDelay = `${0.3 + i * 0.1}s`;
+                bar.innerHTML = `
+                    <div class="flex justify-between text-[10px] uppercase font-bold text-slate-500 mb-1">
+                        <span>${s.emoji} ${s.name}</span>
+                        <span>${pct}%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full bar-${key} eq-bar-fill" style="width: 0%"></div>
+                    </div>
+                `;
+                barContainer.appendChild(bar);
+                setTimeout(() => {
+                    bar.querySelector('.eq-bar-fill').style.width = `${pct}%`;
+                }, 500 + i * 100);
+            });
+
+            // Personal Insight Logic
+            let insight = "";
+            if (dominantSkill === 'decomp') insight = "Because you excel at Decomposition, you are best suited for Project Management or Systems Engineering. You prevent teams from feeling overwhelmed by maintaining a clear, granular vision.";
+            if (dominantSkill === 'pattern') insight = "Your Pattern Recognition strength makes you an ideal Analyst or Strategist. You can predict trends and outcomes because you see history repeating itself where others see chaos.";
+            if (dominantSkill === 'abstract') insight = "Your Abstraction power is rare. You'd thrive as a Creative Director or High-Level Architect. You keep systems lean by removing the weight of unnecessary complexity.";
+            if (dominantSkill === 'algo') insight = "Your Algorithmic thinking is built for Automation and Scale. You are the 'Efficiency Expert' of any group, ensuring work is done perfectly, every single time.";
+
+            document.getElementById('insight-text').textContent = insight;
+        }
+
+        // ================================================
+        // UTILS
+        // ================================================
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            setTimeout(() => document.getElementById(id).classList.add('active'), 50);
+        }
+
+        function resetQuiz() {
+            showScreen('start-screen');
+        }
+
+        function spawnConfetti() {
+            const colors = ['#60A5FA', '#6366F1', '#8B5CF6', '#34D399', '#FBBF24'];
+            for (let i = 0; i < 50; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti-piece';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                const w = 4 + Math.random() * 6;
+                c.style.width = w + 'px';
+                c.style.height = (Math.random() > 0.5 ? w : w / 2) + 'px';
+                c.style.animation = `confettiFall ${2 + Math.random() * 2}s linear forwards`;
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 4000);
+            }
+        }
+
+        // Dev Auth
+        const KEY = 'claude42';
+        function toggleDevLogin() { document.getElementById('dev-login').classList.toggle('hidden'); }
+        function checkDevPassword() {
+            if (document.getElementById('dev-password').value === KEY) {
+                document.getElementById('dev-login').classList.add('hidden');
+                document.getElementById('dev-buttons').classList.remove('hidden');
+            }
+        }
+
+        async function autoPlayAll() {
+            while (currentIndex < totalQuestions) {
+                const opts = document.querySelectorAll('.option-btn');
+                const target = cheatMode === 'high' ? 0 : 3; // Simplified cheat
+                opts[target % opts.length].click();
+                await new Promise(r => setTimeout(r, 400));
+                document.getElementById('next-btn').click();
+                await new Promise(r => setTimeout(r, 200));
+            }
+        }
+    </script>
+</body>
+
+</html>
