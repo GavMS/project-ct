@@ -377,10 +377,10 @@
                     </div>
                     <div id="dev-buttons" class="hidden mt-2 space-y-2">
                         <p class="text-[10px] text-emerald-500 font-semibold text-center">ACCESS GRANTED</p>
-                        <button onclick="startQuiz(10, 'low')"
+                        <button onclick="startQuiz(totalQuestions, 'low')"
                             class="w-full py-3 bg-slate-800 text-slate-300 font-bold text-sm rounded-2xl shadow-md flex items-center justify-center gap-2"><span>📉</span><span>Test
                                 Low Score</span></button>
-                        <button onclick="startQuiz(10, 'high')"
+                        <button onclick="startQuiz(totalQuestions, 'high')"
                             class="w-full py-3 bg-ct-deep text-white font-bold text-sm rounded-2xl shadow-md flex items-center justify-center gap-2"><span>📈</span><span>Test
                                 High Score</span></button>
                     </div>
@@ -992,6 +992,7 @@
 
         function resetQuiz() {
             showScreen('start-screen');
+            setTimeout(() => setQuizLength(totalQuestions), 100);
         }
 
         function spawnConfetti() {
@@ -1088,6 +1089,7 @@
 
         function backToMenu() {
             showScreen('start-screen');
+            setTimeout(() => setQuizLength(totalQuestions), 100);
             loadProgress(); // Re-check if we need resume button
         }
         
@@ -1115,11 +1117,19 @@
 
         async function autoPlayAll() {
             while (currentIndex < totalQuestions) {
+                const q = selectedQuestions[currentIndex];
+                // Pick the option with highest or lowest pts depending on mode
+                let targetIdx = 0;
+                let targetPts = cheatMode === 'high' ? -Infinity : Infinity;
+                q.opts.forEach((opt, i) => {
+                    if (cheatMode === 'high' && opt.pts > targetPts) { targetPts = opt.pts; targetIdx = i; }
+                    if (cheatMode === 'low'  && opt.pts < targetPts) { targetPts = opt.pts; targetIdx = i; }
+                });
                 const opts = document.querySelectorAll('.option-btn');
-                const target = cheatMode === 'high' ? 0 : 3; // Simplified cheat
-                opts[target % opts.length].click();
-                await new Promise(r => setTimeout(r, 400));
-                document.getElementById('next-btn').click();
+                if (opts[targetIdx]) opts[targetIdx].click();
+                await new Promise(r => setTimeout(r, 350));
+                const nextBtn = document.getElementById('next-btn');
+                if (!nextBtn.classList.contains('btn-hidden')) nextBtn.click();
                 await new Promise(r => setTimeout(r, 200));
             }
         }
