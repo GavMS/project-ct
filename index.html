@@ -220,6 +220,19 @@
             transform: scale(0.98);
         }
 
+        @media (max-width: 640px) {
+            .option-btn {
+                padding: 1.25rem !important;
+            }
+            .length-btn {
+                font-size: 0.9rem;
+                padding: 0.8rem !important;
+            }
+            #question-text {
+                font-size: 1.1rem;
+            }
+        }
+
         .option-btn.selected-correct {
             border-color: #6366F1;
             background: rgba(99, 102, 241, 0.1);
@@ -867,6 +880,7 @@
 
             // Overall Score (out of 100)
             const maxPossible = totalQuestions * 4;
+            // Calculate accuracy percentage based on points earned vs max possible points
             const score = Math.round((totalPts / maxPossible) * 100);
             const level = ctLevels.find(l => score >= l.min && score <= l.max);
 
@@ -877,8 +891,8 @@
             document.getElementById('skill-title').textContent = info.name;
             document.getElementById('skill-desc').textContent = info.desc;
             document.getElementById('ct-level').textContent = level.label;
-            document.getElementById('ct-score-text').textContent = `${score}/100`;
-            document.getElementById('ct-desc').textContent = level.desc;
+            document.getElementById('ct-score-text').textContent = `${score}% Accuracy`;
+            document.getElementById('ct-desc').innerHTML = `${level.desc} <br><br> <span class="text-ct-blue font-semibold">Result Explanation:</span> You scored ${score}% based on the optimal computational thinking choices selected across ${totalQuestions} scenarios.`;
 
             setTimeout(() => {
                 document.getElementById('ct-bar').style.width = `${score}%`;
